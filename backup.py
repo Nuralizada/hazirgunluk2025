@@ -1,5 +1,8 @@
 import streamlit as st
+import pandas as pd
+import datetime
 
+st.set_page_config(layout="wide")
 # İstifadəçi məlumatlarını saxlayan bir dict (fayl yerinə)
 USER_DATA = {
     "Natiq.Rasulzada": "gunluk123",  # İstifadəçi ID: parol
@@ -16,11 +19,11 @@ if "authenticated" not in st.session_state:
 
 if not st.session_state.authenticated:
     st.title("Tətbiqə Giriş")
-    
+
     # İstifadəçidən ID və parol tələb olunur
     user_id = st.text_input("ID:")
     password = st.text_input("Password:", type="password")
-    
+
     if st.button("Giriş"):
         # İstifadəçi ID və parol yoxlanılır
         if user_id in USER_DATA and USER_DATA[user_id] == password:
@@ -29,7 +32,9 @@ if not st.session_state.authenticated:
             st.success(f"Giriş uğurlu oldu! Xoş gəldiniz, {user_id}.")
         else:
             st.error("Yanlış istifadəçi ID və ya parol.")
-else: 
+
+if st.session_state.authenticated:
+
             
             import streamlit as st
             import pandas as pd
@@ -41,7 +46,7 @@ else:
             fakt_df = pd.read_csv(fact_url)
             plan_df = pd.read_excel("plan fakt.xlsx")
             plan_f = pd.read_excel("Ekspeditor Fraxt.xlsx")
-            st.set_page_config(layout="wide")
+            
             st.markdown('<style>div.block-container{padding-top:3rem;}</style>', unsafe_allow_html=True)
             
             # Tarix sütunlarını datetime formatına çevirmək
@@ -224,24 +229,29 @@ else:
                     </h3>
                 """, unsafe_allow_html=True)
             
+                # Tarix aralığı üçün minimum və maksimum tarixləri müəyyən edin
+                minimum_baslangic_tarix = pd.Timestamp("2024-01-01")  # Ən erkən tarix (istəyə uyğun dəyişdirilə bilər)
+                maksimum_bitis_tarix = fakt_df['Tarix'].max().date() if not fakt_df.empty else datetime.date.today()
+                
                 # Girişlər üçün üç sütun istifadə edin
                 col1, col2, col3 = st.columns(3)
-            
+                
                 with col1:
                     baslangic_tarix = st.date_input(
                         "Başlanğıc tarixi", 
-                        value=None,
-                        min_value=minimum_baslangic_tarix,
-                        max_value=fakt_df['Tarix'].max().date()
+                        value=minimum_baslangic_tarix.date(),  # Standart başlanğıc tarix
+                        min_value=minimum_baslangic_tarix.date(),
+                        max_value=maksimum_bitis_tarix
                     )
-            
+                
                 with col2:
                     bitis_tarix = st.date_input(
                         "Bitiş tarixi", 
-                        value=None,  
-                        min_value=minimum_baslangic_tarix,
-                        max_value=datetime.date.today() - datetime.timedelta(days=1)
+                        value=maksimum_bitis_tarix,  # Standart bitiş tarix
+                        min_value=minimum_baslangic_tarix.date(),
+                        max_value=maksimum_bitis_tarix
                     )
+
             
                 with col3:
                     rejim_secimi = st.selectbox(
@@ -546,24 +556,29 @@ else:
                     </h3>
                 """, unsafe_allow_html=True)
             
+                                # Seçilmiş ilə uyğun olaraq tarix aralığı məhdudiyyətləri
+                minimum_baslangic_tarix = pd.Timestamp("2024-01-01")  # Ən erkən tarix (2020-ci ildən etibarən)
+                maksimum_bitis_tarix = datetime.date.today()  # Bugünkü tarix
+                
                 # Girişlər üçün üç sütun istifadə edin
                 col1, col2, col3 = st.columns(3)
-            
+                
                 with col1:
                     baslangic_tarix = st.date_input(
-                        "Başlanğıc tarixi", 
-                        value=None,
-                        min_value=minimum_baslangic_tarix,
-                        max_value=fakt_df['Tarix'].max().date()
+                        "Başlanğıc tarixi",
+                        value=minimum_baslangic_tarix.date(),
+                        min_value=minimum_baslangic_tarix.date(),
+                        max_value=maksimum_bitis_tarix
                     )
-            
+                
                 with col2:
                     bitis_tarix = st.date_input(
-                        "Bitiş tarixi", 
-                        value=None,  
-                        min_value=minimum_baslangic_tarix,
-                        max_value=datetime.date.today() - datetime.timedelta(days=1)
+                        "Bitiş tarixi",
+                        value=maksimum_bitis_tarix,
+                        min_value=minimum_baslangic_tarix.date(),
+                        max_value=maksimum_bitis_tarix
                     )
+
             
                 with col3:
                     rejim_secimi = st.selectbox(
@@ -803,17 +818,31 @@ else:
                 with col2:
                     st.markdown("<center><h3 style='color: #16105c;'>Ekspeditorlar üzrə aylıq və illik daşınma məlumatları</h3></center>", unsafe_allow_html=True)
             
+                                # Minimum və maksimum tarixlər
+                minimum_baslangic_tarix = pd.Timestamp("2024-01-01")  # İstəyə uyğun dəyişə bilərsiniz
+                maksimum_bitis_tarix = datetime.date.today() - datetime.timedelta(days=1)
+                
                 # Tarix seçimi üçün üç sütun yaradın
                 col_start_date, col_end_date, col_rejim = st.columns([1, 1, 1])  # Eyni sətrdə tarixi seçirik
                 
                 with col_start_date:
                     # Başlanğıc tarixi seçimi
-                    start_date = st.date_input("Başlanğıc tarixi", value=datetime.date(datetime.datetime.now().year, 1, 1), min_value=minimum_baslangic_tarix, max_value=datetime.date.today() - datetime.timedelta(days=1))
+                    start_date = st.date_input(
+                        "Başlanğıc tarixi", 
+                        value=minimum_baslangic_tarix.date(),  # Varsayılan başlanğıc tarix (ən erkən tarix)
+                        min_value=minimum_baslangic_tarix.date(),
+                        max_value=maksimum_bitis_tarix
+                    )
                 
                 with col_end_date:
                     # Bitiş tarixi seçimi
-                    end_date = st.date_input("Bitiş tarixi", value=datetime.date.today() - datetime.timedelta(days=1), min_value=minimum_baslangic_tarix, max_value=datetime.date.today() - datetime.timedelta(days=1))
-            
+                    end_date = st.date_input(
+                        "Bitiş tarixi", 
+                        value=maksimum_bitis_tarix,  # Varsayılan bitiş tarix (bugünkü tarixdən əvvəlki gün)
+                        min_value=minimum_baslangic_tarix.date(),
+                        max_value=maksimum_bitis_tarix
+                    )
+
                 with col_rejim:
                     # Rejim seçimi üçün multiselect əlavə edirik
                     rejim_options = ["Bütün rejimlər"] + fakt_df['Rejim'].unique().tolist()
@@ -980,22 +1009,30 @@ else:
                 # Tarix filtrlərini yaratmaq üçün iki sütun istifadə edirik
                 col_start_date, col_end_date = st.columns(2)
             
+                # Tarix aralığı üçün minimum və maksimum tarixlər
+                minimum_baslangic_tarix = pd.Timestamp("2024-01-01")  # Ən erkən tarix
+                maksimum_bitis_tarix = datetime.date.today() - datetime.timedelta(days=1)  # Bugünkü tarixdən bir gün əvvəl
+                
+                # Tarix filtrlərini yaratmaq üçün iki sütun istifadə edirik
+                col_start_date, col_end_date = st.columns(2)
+                
                 # Başlanğıc tarixi üçün giriş
                 with col_start_date:
                     tranzit_start_date = st.date_input(
                         "Başlanğıc tarixi",
-                        value=datetime.date(2024, 1, 1),  # Default olaraq 2024-cü ilin yanvarı
-                        min_value=datetime.date(2023, 1, 1),  # Minimum tarix
-                        max_value=datetime.date.today() - datetime.timedelta(days=1)  # Bitiş tarixi today() - 1 gün
+                        value=datetime.date(datetime.datetime.now().year - 1, 1, 1)  # Varsayılan olaraq keçən ilin yanvarı
+                        if datetime.date.today().month == 1 else datetime.date(datetime.datetime.now().year, 1, 1),
+                        min_value=minimum_baslangic_tarix.date(),  # Minimum tarix
+                        max_value=maksimum_bitis_tarix  # Maksimum tarix
                     )
-            
+                
                 # Bitiş tarixi üçün giriş
                 with col_end_date:
                     tranzit_end_date = st.date_input(
                         "Bitiş tarixi",
-                        value=datetime.date.today() - datetime.timedelta(days=1),  # Default olaraq bu günün bir gün əvvəli
+                        value=maksimum_bitis_tarix,  # Varsayılan olaraq bugünkü tarixdən bir gün əvvəli
                         min_value=tranzit_start_date,  # Başlanğıc tarixindən sonra seçilə bilər
-                        max_value=datetime.date.today() - datetime.timedelta(days=1)  # Bitiş tarixi today() - 1 gün
+                        max_value=maksimum_bitis_tarix  # Maksimum tarix
                     )
             
                 # Tarixləri pandas datetime formatına çevirmək
@@ -1202,4 +1239,3 @@ else:
                         {'selector': 'thead th', 'props': [('background-color', '#2b2563'), ('color', 'white')]},
                         {'selector': 'tbody td', 'props': [('text-align', 'center'), ('background-color', '#f0f0f5')]},
                     ]))
-       
