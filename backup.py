@@ -240,11 +240,11 @@ if st.session_state.authenticated:
                 
                 with col1:
                     baslangic_tarix = st.date_input(
-                        "Başlanğıc tarixi", 
-                        value=minimum_baslangic_tarix.date(),  # Standart başlanğıc tarix
-                        min_value=minimum_baslangic_tarix.date(),
-                        max_value=maksimum_bitis_tarix
-                    )
+                    "Başlanğıc tarixi", 
+                    value=pd.Timestamp("2025-01-01").date(),  # Defolt olaraq 2025-01-01
+                    min_value=minimum_baslangic_tarix.date(),
+                    max_value=maksimum_bitis_tarix
+                )
                 
                 with col2:
                     bitis_tarix = st.date_input(
