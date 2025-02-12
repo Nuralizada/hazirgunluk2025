@@ -566,12 +566,13 @@ if st.session_state.authenticated:
                 col1, col2, col3 = st.columns(3)
                 
                 with col1:
-                    baslangic_tarix = st.date_input(
-                        "Başlanğıc tarixi",
-                        value=minimum_baslangic_tarix.date(),
-                        min_value=minimum_baslangic_tarix.date(),
-                        max_value=maksimum_bitis_tarix
-                    )
+                   baslangic_tarix = st.date_input(
+                    "Başlanğıc tarixi", 
+                    value=pd.Timestamp("2025-01-01").date(),  # Defolt olaraq 2025-01-01
+                    min_value=minimum_baslangic_tarix.date(),
+                    max_value=maksimum_bitis_tarix
+                )
+
                 
                 with col2:
                     bitis_tarix = st.date_input(
@@ -830,11 +831,12 @@ if st.session_state.authenticated:
                 with col_start_date:
                     # Başlanğıc tarixi seçimi
                     start_date = st.date_input(
-                        "Başlanğıc tarixi", 
-                        value=minimum_baslangic_tarix.date(),  # Varsayılan başlanğıc tarix (ən erkən tarix)
-                        min_value=minimum_baslangic_tarix.date(),
-                        max_value=maksimum_bitis_tarix
-                    )
+                    "Başlanğıc tarixi", 
+                    value=pd.Timestamp("2025-01-01").date(),  # Defolt olaraq 2025-01-01
+                    min_value=minimum_baslangic_tarix.date(),
+                    max_value=maksimum_bitis_tarix
+                )
+
                 
                 with col_end_date:
                     # Bitiş tarixi seçimi
