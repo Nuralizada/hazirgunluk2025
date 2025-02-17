@@ -1351,3 +1351,4 @@ if st.session_state.authenticated:
                     {'selector': 'thead th', 'props': [('background-color', '#2b2563'), ('color', 'white')]},
                     {'selector': 'tbody td', 'props': [('text-align', 'center'), ('background-color', '#f0f0f5')]}
                 ]))
+                btq_grouped = btq_grouped.drop(columns=['Say'])
