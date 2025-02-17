@@ -212,7 +212,7 @@ if st.session_state.authenticated:
             # Səhifəni seçin
             page = st.sidebar.radio(
                 "Səhifəni seçin",
-                ("Report", "Rejimlər üzrə hesabat", "Digər yüklər", "Tranzit")
+                ("Report", "Rejimlər üzrə hesabat", "Digər yüklər", "Tranzit","BTQ")
             )
             
             # Card tərzi üçün tərz
@@ -1243,3 +1243,111 @@ if st.session_state.authenticated:
                         {'selector': 'thead th', 'props': [('background-color', '#2b2563'), ('color', 'white')]},
                         {'selector': 'tbody td', 'props': [('text-align', 'center'), ('background-color', '#f0f0f5')]},
                     ]))
+
+            
+            
+
+
+            import streamlit as st
+            import pandas as pd
+            import matplotlib.pyplot as plt
+            import numpy as np
+
+            if page == "BTQ":
+                # Şəkili əlavə edin
+                image = Image.open('Picture1.png')
+
+                # İki sütun yaratmaq (birincisi kiçik şəkil üçün, ikincisi başlıq üçün)
+                col1, col2 = st.columns([0.1, 0.9])
+                
+                with col1:
+                    st.image(image, width=100)
+                
+                with col2:
+                    st.markdown("<center><h4 style='color: #16105c;'>BTQ xətti üzrə daşınma məlumatları</h4></center>", unsafe_allow_html=True)
+
+                # Minimum və maksimum tarixlər
+                minimum_baslangic_tarix = pd.Timestamp("2024-01-01")
+                maksimum_bitis_tarix = datetime.date.today() - datetime.timedelta(days=1)
+                
+                col_start_date, col_end_date, col_rejim = st.columns([1, 1, 1])
+                
+                with col_start_date:
+                    start_date = st.date_input(
+                        "Başlanğıc tarixi", 
+                        value=pd.Timestamp("2025-01-01").date(),
+                        min_value=minimum_baslangic_tarix.date(),
+                        max_value=maksimum_bitis_tarix
+                    )
+
+                with col_end_date:
+                    end_date = st.date_input(
+                        "Bitiş tarixi", 
+                        value=maksimum_bitis_tarix,
+                        min_value=minimum_baslangic_tarix.date(),
+                        max_value=maksimum_bitis_tarix
+                    )
+
+                with col_rejim:
+                    rejim_options = ["Bütün rejimlər"] + fakt_df['Rejim'].unique().tolist()
+                    selected_rejim = st.selectbox("Rejim:", rejim_options, index=0)
+
+                # 2022-2023 və 2023-2024 rejim məlumatlarını göstərmək üçün iki sütun yaradın
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.subheader("2022-2023")
+                    rejim_summary_1 = pd.DataFrame({
+                        'Rejim': ['Ümumi', 'Tranzit', 'İdxal', 'İxrac'],
+                        '2022': [412370, 341116, 37780, 33474],
+                        '2023': [89981, 66266, 10895, 12820]
+                    })
+                    rejim_summary_1['Fərq'] = rejim_summary_1['2023'] - rejim_summary_1['2022']
+                    rejim_summary_1.index = rejim_summary_1.index + 1  # Sıralamanı 1-dən başlatmaq üçün
+                    for col in ['2022', '2023', 'Fərq']:
+                        rejim_summary_1[col] = rejim_summary_1[col].astype(float).apply(lambda x: f"{x:,.0f}")
+                    st.table(rejim_summary_1.style.set_table_styles([
+                        {'selector': 'thead th', 'props': [('background-color', '#2b2563'), ('color', 'white')]},
+                        {'selector': 'tbody td', 'props': [('text-align', 'center'), ('background-color', '#f0f0f5')]}
+                    ]))
+
+                with col2:
+                    st.subheader("2023-2024")
+                    rejim_summary_2 = pd.DataFrame({
+                        'Rejim': ['Ümumi', 'Tranzit', 'İdxal', 'İxrac'],
+                        '2023': [89981, 66266, 10895, 12820],
+                        '2024': [49681, 35998, 10339, 3344]
+                    })
+                    rejim_summary_2['Fərq'] = rejim_summary_2['2024'] - rejim_summary_2['2023']
+                    rejim_summary_2.index = rejim_summary_2.index + 1  # Sıralamanı 1-dən başlatmaq üçün
+                    for col in ['2023', '2024', 'Fərq']:
+                        rejim_summary_2[col] = rejim_summary_2[col].astype(float).apply(lambda x: f"{x:,.0f}")
+                    st.table(rejim_summary_2.style.set_table_styles([
+                        {'selector': 'thead th', 'props': [('background-color', '#2b2563'), ('color', 'white')]},
+                        {'selector': 'tbody td', 'props': [('text-align', 'center'), ('background-color', '#f0f0f5')]}
+                    ]))
+
+                # Filtrləri tətbiq edək
+                filtered_df = fakt_df.copy()
+                filtered_df = filtered_df[(filtered_df['Tarix'] >= pd.Timestamp(start_date)) & (filtered_df['Tarix'] <= pd.Timestamp(end_date))]
+                if selected_rejim != "Bütün rejimlər":
+                    filtered_df = filtered_df[filtered_df['Rejim'] == selected_rejim]
+
+                btq_df = filtered_df[filtered_df['BTQ'] == "BTQ"]
+                
+                btq_grouped = btq_df.groupby(['Eksp']).agg(
+                    Həcm_fakt=('Həcm_fakt', 'sum'),
+                    Vaqon_sayı=('Vaqon_sayı', 'sum'),
+                    Konteyner=('Konteyner', 'sum')
+                ).reset_index()
+                btq_grouped['Say'] = btq_grouped['Vaqon_sayı'] + btq_grouped['Konteyner']
+                btq_grouped.index = btq_grouped.index + 1  # Sıralamanı 1-dən başlatmaq üçün
+
+                for col in ['Həcm_fakt', 'Vaqon_sayı', 'Konteyner', 'Say']:
+                    btq_grouped[col] = btq_grouped[col].astype(float).apply(lambda x: f"{x:,.0f}")
+
+                st.markdown(f"<h4 style='color: black; font-size:18px;'>Ekspeditorlar üzrə BTQ daşımaları ({start_date} - {end_date}, Rejim: {selected_rejim})</h4>", unsafe_allow_html=True)
+
+                st.table(btq_grouped.style.set_table_styles([
+                    {'selector': 'thead th', 'props': [('background-color', '#2b2563'), ('color', 'white')]},
+                    {'selector': 'tbody td', 'props': [('text-align', 'center'), ('background-color', '#f0f0f5')]}
+                ]))
