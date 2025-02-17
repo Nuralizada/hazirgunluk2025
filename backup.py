@@ -1339,10 +1339,10 @@ if st.session_state.authenticated:
                     Vaqon_sayı=('Vaqon_sayı', 'sum'),
                     Konteyner=('Konteyner', 'sum')
                 ).reset_index()
-                btq_grouped['Say'] = btq_grouped['Vaqon_sayı'] + btq_grouped['Konteyner']
+                
                 btq_grouped.index = btq_grouped.index + 1  # Sıralamanı 1-dən başlatmaq üçün
 
-                for col in ['Həcm_fakt', 'Vaqon_sayı', 'Konteyner', 'Say']:
+                for col in ['Həcm_fakt', 'Vaqon_sayı', 'Konteyner']:
                     btq_grouped[col] = btq_grouped[col].astype(float).apply(lambda x: f"{x:,.0f}")
 
                 st.markdown(f"<h4 style='color: black; font-size:18px;'>Ekspeditorlar üzrə BTQ daşımaları ({start_date} - {end_date}, Rejim: {selected_rejim})</h4>", unsafe_allow_html=True)
@@ -1351,4 +1351,4 @@ if st.session_state.authenticated:
                     {'selector': 'thead th', 'props': [('background-color', '#2b2563'), ('color', 'white')]},
                     {'selector': 'tbody td', 'props': [('text-align', 'center'), ('background-color', '#f0f0f5')]}
                 ]))
-                btq_grouped = btq_grouped.drop(columns=['Say'])
+               
