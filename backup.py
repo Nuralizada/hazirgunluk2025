@@ -57,7 +57,7 @@ if st.session_state.authenticated:
             plan_f['Tarix'] = pd.to_datetime(plan_f['Tarix'], errors='coerce')
             
             # Minimum başlanğıc tarixi (yanvarın 1-dən etibarən)
-            minimum_baslangic_tarix = datetime.date(datetime.datetime.now().year, 1, 31)
+            minimum_baslangic_tarix = datetime.date(datetime.datetime.now().year, 31, 1)
             
             # Hər ayın neçə günə malik olduğunu hesablayan funksiya
             def ayin_gunleri_ve_hecmi(year, month):
