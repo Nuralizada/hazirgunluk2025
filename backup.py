@@ -8,7 +8,7 @@ USER_DATA = {
     "Natiq.Rasulzada": "gunluk123",  # İstifadəçi ID: parol
     "Gulchin.Nuralizada.ADY": "gunluk2501",
     "Emil.Mammadov": "gunluk2501",
-     "Heydar.Cafarli": "2025gunluk",
+     "Heydar.Jafarli": "gunluk8888",
     "Lalezar.Hanifayeva": "gunluk0303",
     "Lala.Rzayeva.ADY": "gunlukhesabat123",
     "Adil.Movsumov": "Pilotboeing737"
