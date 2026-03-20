@@ -453,65 +453,8 @@ if st.session_state.authenticated:
             
             
             
-                     '''   ### Ekspeditorlar üzrə məlumatları toplamaq
-                        ekspeditorlar = plan_df['Ekspeditor'].unique()
-                        total_plan_hecmi_eksp = []
-                        total_fakt_hecmi_eksp = []
-                        total_plan_hecmi_eksp_f = []
-                        
-                        for ekspeditor in ekspeditorlar:
-                            plan_hecmi_eksp = plan_hecmi_tarix_araligina_gore(plan_df, baslangic_tarix, bitis_tarix, rejim_secimi, ekspeditor=ekspeditor)
-                            total_plan_hecmi_eksp.append(plan_hecmi_eksp)
-                            
-                            plan_hecmi_eksp_f = plan_hecmi_tarix_araligina_gore_f(plan_f, baslangic_tarix, bitis_tarix, rejim_secimi, ekspeditor=ekspeditor)
-                            total_plan_hecmi_eksp_f.append(plan_hecmi_eksp_f)
-            
-                            fakt_hecmi_eksp = fakt_df[
-                                (fakt_df['Tarix'].dt.date >= baslangic_tarix) & 
-                                (fakt_df['Tarix'].dt.date <= bitis_tarix) & 
-                                (fakt_df['Rejim'] == rejim_secimi) & 
-                                (fakt_df['Eksp'] == ekspeditor)
-                            ]['Həcm_fakt'].sum()
-            
-                            total_fakt_hecmi_eksp.append(fakt_hecmi_eksp)
-            
-                        combined_df = pd.DataFrame({
-                            'Ekspeditor': ekspeditorlar,
-                            'Plan(KM)': total_plan_hecmi_eksp,
-                            'Fakt': total_fakt_hecmi_eksp
-                        })
-            
-                        # Yerinə Yetirmə Faizi sütununu əlavə edin
-                        combined_df['Yerinə yetirmə faizi'] = (combined_df['Fakt'] / combined_df['Plan(KM)']).replace([float('inf'), -float('inf')],1).fillna(0) * 100
-                        combined_df['Yerinə yetirmə faizi'].fillna(0, inplace=True)
-            
-                        # Fraxt Həcmi üçün yeni sütunu əlavə edin
-                        combined_df['Plan(Fraxt)'] = total_plan_hecmi_eksp_f  # Həcm fraxt sütunu əlavə edin
-            
-                        # Həcm fraxtın Yerinə Yetirmə Faizi sütununu əlavə edin
-                        combined_df['Yerinə yetirmə faizi(Fraxt)'] = (combined_df['Fakt'] / combined_df['Plan(Fraxt)']).replace([float('inf'), -float('inf')],1 ).fillna(0) * 100
-                        combined_df['Yerinə yetirmə faizi(Fraxt)'].fillna(0, inplace=False)
-            
-                        # Plan və faktın boş olduğu ekspeditorları tapın
-                        fakt_ekspeditorlar = fakt_df['Eksp'].unique()
-                        plan_ekspeditorlar = plan_df['Ekspeditor'].unique()
-            
-                        
-                       # "Plan(KM)" sütununa görə çoxdan aza sıralayın
-                        combined_df = combined_df.sort_values(by='Plan(KM)', ascending=False)
-            
-                        # İndeksi sıfırlayaraq sıralı indeks yaradın
-                        combined_df.reset_index(drop=True, inplace=True)
-            
-                        # İndeksi 1-dən başlatmaq üçün
-                        combined_df.index = range(1, len(combined_df) + 1)
-            
-                        # Ekspeditorlar cədvəlini yaradın
-                        create_table(combined_df, "Ekspeditorlar üzrə plan və fakt həcmləri")
-                        ### Vaqon növü üzrə məlumatları toplamaq
-                        vaqon_novleri = fakt_df['vaqon_növü'].unique()
-                        total_plan_hecmi_vaqon = []
-                        total_fakt_hecmi_vaqon = []  '''
+                    
+                 
             
                         for vaqon_novu in vaqon_novleri:
                             plan_hecmi_vaqon = plan_hecmi_tarix_araligina_gore(plan_df, baslangic_tarix, bitis_tarix, rejim_secimi, vaqon_novu=vaqon_novu)
