@@ -449,13 +449,7 @@ if st.session_state.authenticated:
                                 {'selector': 'tbody td', 'props': [('text-align', 'center'), ('background-color', '#f0f0f5')]}
                             ]))
             
-            
-            
-            
-            
-                    
-                 
-            
+    
                         for vaqon_novu in vaqon_novleri:
                             plan_hecmi_vaqon = plan_hecmi_tarix_araligina_gore(plan_df, baslangic_tarix, bitis_tarix, rejim_secimi, vaqon_novu=vaqon_novu)
                             total_plan_hecmi_vaqon.append(plan_hecmi_vaqon)
