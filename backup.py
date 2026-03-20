@@ -453,7 +453,7 @@ if st.session_state.authenticated:
             
             
             
-                        ### Ekspeditorlar üzrə məlumatları toplamaq
+                     '''   ### Ekspeditorlar üzrə məlumatları toplamaq
                         ekspeditorlar = plan_df['Ekspeditor'].unique()
                         total_plan_hecmi_eksp = []
                         total_fakt_hecmi_eksp = []
@@ -511,7 +511,7 @@ if st.session_state.authenticated:
                         ### Vaqon növü üzrə məlumatları toplamaq
                         vaqon_novleri = fakt_df['vaqon_növü'].unique()
                         total_plan_hecmi_vaqon = []
-                        total_fakt_hecmi_vaqon = []
+                        total_fakt_hecmi_vaqon = []  '''
             
                         for vaqon_novu in vaqon_novleri:
                             plan_hecmi_vaqon = plan_hecmi_tarix_araligina_gore(plan_df, baslangic_tarix, bitis_tarix, rejim_secimi, vaqon_novu=vaqon_novu)
